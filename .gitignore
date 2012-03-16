@@ -31,3 +31,6 @@ gen/
 # Local configuration file (sdk path, etc)
 local.properties
 .manager
+
+# specific ignored files.
+MFCUtility.jar
