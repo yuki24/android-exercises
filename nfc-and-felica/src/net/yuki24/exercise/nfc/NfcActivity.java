@@ -23,8 +23,7 @@ public class NfcActivity extends Activity {
 			byte[] idm = intent.getByteArrayExtra(NfcAdapter.EXTRA_ID);
 
 			try {
-				Uri uri = Uri.parse("market://details?id=com.main.typograffit");
-				Intent i = new Intent(Intent.ACTION_VIEW, uri);
+				Intent i = new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=com.main.typograffit"));
 				PushIntentSegment segment = new PushIntentSegment(i);
 				PushCommand pushCommand = new PushCommand(new IDm(idm), segment);
 				FeliCaLib.execute(tag, pushCommand);

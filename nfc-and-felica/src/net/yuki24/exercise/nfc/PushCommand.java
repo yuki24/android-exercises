@@ -9,12 +9,12 @@ import net.kazzz.felica.lib.FeliCaLib;
 import net.kazzz.felica.lib.FeliCaLib.CommandPacket;
 import net.kazzz.felica.lib.FeliCaLib.IDm;
 
+import com.felicanetworks.mfc.PushIntentSegment;
 import com.felicanetworks.mfc.PushSegment;
 
 public class PushCommand extends CommandPacket {
     private static final Charset URL_CHARSET = Charset.forName("iso8859-1");
     private static final Charset ICC_CHARSET = Charset.forName("iso8859-1");
-    //private static final Charset STARTUP_PARAM_CHARSET = Charset.forName("Shift_JIS");
 	public static final byte PUSH = (byte) 0xb0;
 
 	static {
@@ -33,16 +33,16 @@ public class PushCommand extends CommandPacket {
 	}
 
 	private static byte[] packSegment(byte[]... segments) {
-		int bytes = 3;									// 個別部数(1byte) + チェックサム(2bytes)
+		// command(1byte) + check sum(2bytes)
+		int bytes = 3;
 		for (int i = 0; i < segments.length; ++i)
 			bytes += segments[i].length;
 
 		ByteBuffer buffer = ByteBuffer.allocate(bytes);
-		buffer.put((byte) segments.length);				// 個別部数
-		for (int i = 0; i < segments.length; ++i)		// 個別部
-			buffer.put(segments[i]);
+		buffer.put((byte) segments.length);
+		for (int i = 0; i < segments.length; ++i) buffer.put(segments[i]);
 
-		int sum = segments.length;						// チェックサム
+		int sum = segments.length;
 		for (int i = 0; i < segments.length; ++i) {
 			byte[] e = segments[i];
 			for (int j = 0; j < e.length; ++j)	sum += e[j];
@@ -54,7 +54,7 @@ public class PushCommand extends CommandPacket {
 
 	private static byte[][] buildData(PushSegment segment) throws FeliCaException {
 		try {
-			return buildPushIntentSegment(1, "market://details?id=com.main.typograffit", "ANDR01");
+			return buildPushIntentSegment(1, ((PushIntentSegment) segment).getIntentData().getData().toString(), "ANDR01");
 		} catch (UnsupportedEncodingException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -65,22 +65,16 @@ public class PushCommand extends CommandPacket {
 	private static byte[][] buildPushIntentSegment(int type, String url, String icc) throws UnsupportedEncodingException {
 		byte[] urlBytes = url.getBytes(URL_CHARSET);
 		byte[] iccBytes = icc.getBytes(ICC_CHARSET);
-
-		// type(1byte) + paramBytesLength(2bytes) + urlBytesLength(2bytes) + iccBytesLength(2bytes)
 		int capacity = urlBytes.length + iccBytes.length + 7;
 		ByteBuffer buffer = ByteBuffer.allocate(capacity);
 
-		// 個別部ヘッダ
-		buffer.put((byte) type);				// 起動制御情報
-		int paramSize = capacity - 3; 			// 個別部パラメータサイズ: type(1byte) + paramBytesLength(2)
+		buffer.put((byte) type);
+		int paramSize = capacity - 3;
 		putAsLittleEndian(paramSize, buffer);
-
-		// 個別部パラメータ
-		putAsLittleEndian(0, buffer);				// URLサイズ
-		//buffer.put(urlBytes);						// URL
-		putAsLittleEndian(iccBytes.length, buffer);	// iccサイズ
-		buffer.put(iccBytes);						// icc
-		buffer.put(urlBytes);						// (アプリケーション起動パラメータ)
+		putAsLittleEndian(0, buffer);
+		putAsLittleEndian(iccBytes.length, buffer);
+		buffer.put(iccBytes);
+		buffer.put(urlBytes);
 		return new byte[][] { buffer.array() };
     }
 
