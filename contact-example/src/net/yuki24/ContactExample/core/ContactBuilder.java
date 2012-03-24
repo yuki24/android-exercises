@@ -10,6 +10,7 @@ import android.provider.ContactsContract;
 import android.provider.ContactsContract.Data;
 import android.provider.ContactsContract.RawContacts;
 import android.provider.ContactsContract.CommonDataKinds.Phone;
+import android.provider.ContactsContract.CommonDataKinds.Email;
 import android.provider.ContactsContract.CommonDataKinds.StructuredName;
 
 public class ContactBuilder {
@@ -41,7 +42,15 @@ public class ContactBuilder {
 			.withValue(Phone.NUMBER, phoneNumber)
 			.build());
 	}
-	
+
+	public void assignEmail(String email) {
+		ops.add(ContentProviderOperation.newInsert(Data.CONTENT_URI)
+			.withValueBackReference(Data.RAW_CONTACT_ID, rawContactInsertIndex)
+			.withValue(Data.MIMETYPE, Email.CONTENT_ITEM_TYPE)
+			.withValue(Email.DATA, email)
+			.build());
+	}
+
 	public void assignDisplayName(String displayName) {
 		ops.add(ContentProviderOperation.newInsert(Data.CONTENT_URI)
 			.withValueBackReference(Data.RAW_CONTACT_ID, rawContactInsertIndex)
@@ -49,7 +58,33 @@ public class ContactBuilder {
 			.withValue(StructuredName.DISPLAY_NAME, displayName)
 			.build());
 	}
-	
-	//private static void assignEmail();
-	//private static void assignFullName();
+
+	public void assignFullName(String firstName, String lastName) {
+		ops.add(ContentProviderOperation.newInsert(Data.CONTENT_URI)
+			.withValueBackReference(Data.RAW_CONTACT_ID, rawContactInsertIndex)
+			.withValue(Data.MIMETYPE, StructuredName.CONTENT_ITEM_TYPE)
+			.withValue(StructuredName.DISPLAY_NAME, buildFullname(firstName, lastName))
+			.withValue(StructuredName.GIVEN_NAME, firstName)
+			.withValue(StructuredName.FAMILY_NAME, lastName)
+			.build());
+	}
+
+	public void assignFullName(String firstName, String middleName, String lastName) {
+		ops.add(ContentProviderOperation.newInsert(Data.CONTENT_URI)
+			.withValueBackReference(Data.RAW_CONTACT_ID, rawContactInsertIndex)
+			.withValue(Data.MIMETYPE, StructuredName.CONTENT_ITEM_TYPE)
+			.withValue(StructuredName.DISPLAY_NAME, buildFullname(firstName, middleName, lastName))
+			.withValue(StructuredName.GIVEN_NAME, firstName)
+			.withValue(StructuredName.MIDDLE_NAME, middleName)
+			.withValue(StructuredName.FAMILY_NAME, lastName)
+			.build());
+	}
+
+	private String buildFullname(String firstName, String lastName) {
+		return (new StringBuilder()).append(firstName).append(" ").append(lastName).toString();
+	}
+
+	private String buildFullname(String firstName, String middleName, String lastName) {
+		return (new StringBuilder()).append(firstName).append(" ").append(middleName).append(" ").append(lastName).toString();
+	}
 }

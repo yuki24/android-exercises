@@ -19,7 +19,8 @@ public class ContactExampleActivity extends Activity {
     	// add a contact
         ContactBuilder cb = new ContactBuilder();
         cb.assignAccount();
-        cb.assignDisplayName("Who am I");
+        cb.assignFullName("Taro", "Yamada");
+        cb.assignEmail("foo@example.com");
         cb.assignPhoneNumber("819012345678");
 
         try {
