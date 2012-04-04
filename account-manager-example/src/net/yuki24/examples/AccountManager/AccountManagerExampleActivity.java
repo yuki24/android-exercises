@@ -1,16 +1,11 @@
 package net.yuki24.examples.AccountManager;
 
 import java.util.ArrayList;
-
-import net.yuki24.examples.AccountManager.authenticator.ExampleAccountAuthenticator;
-
 import android.accounts.Account;
 import android.accounts.AccountAuthenticatorActivity;
 import android.accounts.AccountManager;
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.provider.SyncStateContract.Constants;
 
 public class AccountManagerExampleActivity extends AccountAuthenticatorActivity {
 	@Override
