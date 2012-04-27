@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+	package="net.yuki24.c2dm" android:versionCode="1" android:versionName="1.0">
+	<uses-sdk android:minSdkVersion="8" />
+	<permission android:name="net.yuki24.c2dm.permission.C2D_MESSAGE" android:protectionLevel="signature" />
+	<uses-permission android:name="net.yuki24.c2dm.permission.C2D_MESSAGE" />
+	<uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
+	<uses-permission android:name="android.permission.INTERNET" />
+	<uses-permission android:name="android.permission.WAKE_LOCK" />
+	<application android:icon="@drawable/ic_launcher" android:label="@string/app_name">
+		<activity android:name=".C2dmActivity" android:label="@string/app_name">
+			<intent-filter>
+				<action android:name="android.intent.action.MAIN" />
+				<category android:name="android.intent.category.LAUNCHER" />
+			</intent-filter>	
+		</activity>
+		<service android:name=".C2DMReceiver" />
+		<receiver android:name="net.yuki24.c2dm.util.C2DMBroadcastReceiver"
+				  android:permission="com.google.android.c2dm.permission.SEND">
+			<intent-filter>
+				<action android:name="com.google.android.c2dm.intent.RECEIVE" />
+				<category android:name="net.yuki24.c2dm" />
+			</intent-filter>
+			<intent-filter>
+				<action android:name="com.google.android.c2dm.intent.REGISTRATION" />
+				<category android:name="net.yuki24.c2dm" />
+			</intent-filter>
+		</receiver>
+	</application>
+</manifest>
